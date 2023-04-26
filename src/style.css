@@ -1,3 +1,44 @@
 body {
     background-color: blue;
+    color: white;
+    font-weight: bold;
+}
+
+#main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.city-side {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    justify-content: center;
+}
+
+.city-card {
+    border-radius: 6px;
+    background-color: white;
+    box-shadow: -2px 2px 2px 2px gray;
+    color: black;
+    padding: .25rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;    
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.city-card-temp {
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.search-side {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    justify-content: center;
 }
