@@ -21,19 +21,119 @@ const formDiv = document.createElement('div');
 const searchForm = document.createElement('form');
 searchForm.setAttribute('id', 'search');
 
+const searchBarDiv = document.createElement('div');
+searchBarDiv.setAttribute('id', 'search-bar-div');
+searchForm.appendChild(searchBarDiv);
 const searchBar = document.createElement('input');
 searchBar.setAttribute('id', 'search-bar');
 searchBar.setAttribute('type', 'text');
+searchBar.setAttribute('name', 'search-bar');
 searchBar.setAttribute('placeholder', 'Search for a city...');
-searchForm.appendChild(searchBar)
+searchBarDiv.appendChild(searchBar);
 
+const searchButtonDiv = document.createElement('div');
+searchButtonDiv.setAttribute('id', 'search-button-div');
+searchForm.appendChild(searchButtonDiv);
 const searchButton = document.createElement('button');
 searchButton.setAttribute('type', 'submit');
 searchButton.innerText = 'Search';
-searchForm.appendChild(searchButton);
+searchButtonDiv.appendChild(searchButton);
 
 formDiv.appendChild(searchForm);
 searchSide.appendChild(formDiv);
+
+const errorDiv = document.createElement('div');
+errorDiv.setAttribute('id', 'error');
+errorDiv.classList.add('error', 'hide');
+errorDiv.innerText = 'City not in database.';
+searchSide.appendChild(errorDiv);
+
+const resultsDiv = document.createElement('div');
+resultsDiv.setAttribute('id', 'results-div');
+resultsDiv.classList.add('results-div');
+searchSide.appendChild(resultsDiv);
+
+const resultsTop = document.createElement('div');
+resultsTop.setAttribute('id', 'results-top');
+resultsTop.classList.add('vertical');
+resultsDiv.appendChild(resultsTop);
+
+const resultsName = document.createElement('div');
+resultsName.setAttribute('id', 'results-name');
+resultsTop.appendChild(resultsName);
+
+const resultsTime = document.createElement('div');
+resultsTime.setAttribute('id', 'results-time');
+resultsTop.appendChild(resultsTime);
+
+const resultsMid = document.createElement('div');
+resultsMid.setAttribute('id', 'results-mid');
+resultsMid.classList.add('horizontal');
+resultsDiv.appendChild(resultsMid);
+
+const reTemp = document.createElement('div');
+reTemp.setAttribute('id', 'results-temp');
+resultsMid.appendChild(reTemp);
+
+const resultsIconDiv = document.createElement('div');
+resultsIconDiv.setAttribute('id', 'results-icon-div');
+resultsIconDiv.classList.add('vertical');
+resultsMid.appendChild(resultsIconDiv);
+
+const resultsIconImg = document.createElement('div');
+resultsIconImg.setAttribute('id', 'results-icon-img');
+resultsIconDiv.appendChild(resultsIconImg);
+
+const resultsIconText = document.createElement('div');
+resultsIconText.setAttribute('id', 'results-icon-text');
+resultsIconDiv.appendChild(resultsIconText);
+
+const resultsBot = document.createElement('div');
+resultsBot.setAttribute('id', 'results-bot');
+resultsBot.classList.add('horizontal');
+resultsDiv.appendChild(resultsBot);
+
+const reHi = document.createElement('div');
+reHi.setAttribute('id', 'hi-div');
+reHi.classList.add('vertical');
+resultsBot.appendChild(reHi);
+
+const hiText = document.createElement('div');
+hiText.setAttribute('id', 'hi-text');
+hiText.innerText = 'High';
+reHi.appendChild(hiText);
+
+const hiTemp = document.createElement('div');
+hiTemp.setAttribute('id', 'hi-temp');
+reHi.appendChild(hiTemp);
+
+const reLow = document.createElement('div');
+reLow.setAttribute('id', 'low-div');
+reLow.classList.add('vertical');
+resultsBot.appendChild(reLow);
+
+const lowText = document.createElement('div');
+lowText.setAttribute('id', 'low-text');
+lowText.innerText = 'Low';
+reLow.appendChild(lowText);
+
+const lowTemp = document.createElement('div');
+lowTemp.setAttribute('id', 'low-temp');
+reLow.appendChild(lowTemp);
+
+const rePrec = document.createElement('div');
+rePrec.setAttribute('id', 'prec-div');
+rePrec.classList.add('vertical');
+resultsBot.appendChild(rePrec);
+
+const precText = document.createElement('div');
+precText.setAttribute('id', 'prec-text');
+precText.innerText = 'Precip.';
+rePrec.appendChild(precText);
+
+const precChance = document.createElement('div');
+precChance.setAttribute('id', 'prec-chance');
+rePrec.appendChild(precChance);
 
 async function getData(city) {
     const weather = await getWeather(city)
@@ -42,17 +142,28 @@ async function getData(city) {
     const tempC = await weather.current.temp_c;
     const time = await weather.location.localtime;
     const icon = await weather.current.condition.icon;
-    const info = new Info(name, tempF, tempC, time, icon);
+    const hi = await weather.forecast.forecastday[0].day.maxtemp_f;
+    const low = await weather.forecast.forecastday[0].day.mintemp_f;
+    const precip = await weather.forecast.forecastday[0].day.daily_chance_of_rain;
+    const condition = await weather.current.condition.text;
+    const info = new Info(name, tempF, tempC, time, icon, hi, low, precip, condition);
     console.log(info);
     return info;
 }
 
+// Create cards
+function createBlankCards() {
+    cities.forEach((city) => {
+        const cityCard = document.createElement('div');
+        citySide.appendChild(cityCard);
+        cityCard.setAttribute('id', `${city}`)
+        cityCard.classList.add('city-card');
+    });
+}
+
 // Create city card
 async function createCityCard(city) {
-    const cityCard = document.createElement('div');
-    main.appendChild(cityCard);
-    cityCard.setAttribute('id', `${city}`)
-    cityCard.classList.add('city-card');
+    const cityCard = document.getElementById(city);
     const cityInfo = await getData(city);
     createFields(cityInfo);
 
@@ -70,7 +181,7 @@ async function createCityCard(city) {
         const b = document.createElement('div');
         b.classList.add('city-card-temp');
         cityCard.appendChild(b);
-        b.innerText = `${Math.floor(info.tempF)}`
+        b.innerHTML = `${Math.floor(info.tempF)}&#176`;
 
         const c = document.createElement('div');
         c.classList.add('city-card-icon');
@@ -82,4 +193,37 @@ async function createCityCard(city) {
     citySide.appendChild(cityCard);
 }
 
+async function populateResults(city) {
+    const cityInfo = await getData(city);
+    resultsName.innerText = cityInfo.name;
+    resultsTime.innerText = `${cityInfo.time.substr(-5)}`;
+    const a = document.createElement('img');
+    a.setAttribute('src', `https:${cityInfo.icon}`);
+    resultsIconImg.appendChild(a);
+    resultsIconText.innerText = cityInfo.condition;
+    reTemp.innerHTML = `${Math.floor(cityInfo.tempF)}&#176`;
+    hiTemp.innerHTML = `${Math.floor(cityInfo.hi)}&#176`;
+    lowTemp.innerHTML = `${Math.floor(cityInfo.low)}&#176`;
+    precChance.innerHTML = `${cityInfo.precip}%`;
+}
+
+async function searchCity(event) {
+    errorDiv.classList.add('hide');
+    const formData = new FormData(event.target);
+    let city = formData.get('search-bar');
+    city = city.trim();
+    console.log(city);
+    if (!city) {
+        errorDiv.classList.remove('hide');
+    }
+    const test = await getData(city);
+    console.log(test);
+    event.preventDefault();
+}
+
+document.querySelector('form').addEventListener('submit', searchCity);
+
+
+createBlankCards();
 cities.forEach(city => createCityCard(city));
+populateResults('New York');

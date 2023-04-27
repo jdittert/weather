@@ -1,10 +1,14 @@
 export class Info {
-    constructor(name, tempF, tempC, time, icon) {
+    constructor(name, tempF, tempC, time, icon, hi, low, precip, condition) {
         this.name = name;
         this.tempF = tempF;
         this.tempC = tempC;
         this.time = time;
         this.icon = icon;
+        this.hi = hi;
+        this.low = low;
+        this.precip = precip;
+        this.condition = condition;
     }
 }
 
@@ -18,7 +22,8 @@ export async function getWeather(city) {
             throw new Error(`${city} not in database.`);
         };                
     } catch (error) {
-        console.log(error);
+        document.querySelector('.error').innerText = error;
+        document.querySelector('.error').classList.remove('hide');
     }
     return weatherData;   
 }

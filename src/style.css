@@ -1,7 +1,15 @@
+@font-face {
+    font-family: 'Noto Sans';
+    src: url(./fonts/NotoSans-Regular.ttf);
+}
 body {
     background-color: blue;
-    color: white;
     font-weight: bold;
+    font-family: 'Noto Sans';
+}
+
+* {
+    box-sizing: border-box;
 }
 
 #main {
@@ -37,8 +45,90 @@ body {
 }
 
 .search-side {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: min-content, 1fr;
     gap: .5rem;
     justify-content: center;
+}
+
+form {
+    display: flex;
+    gap: .5rem;
+}
+
+input {
+    border-radius: 6px;
+    background-color: white;
+    box-shadow: -2px 2px 2px 2px gray;
+    color: black;    
+    width: 300px;
+    height: 32px;
+    padding: .25rem;
+    border: none;
+}
+
+input:focus {
+    outline: none;
+    font-size: 1rem;
+}
+
+#search-button-div {
+    text-align: right;
+}
+
+button {
+    border-radius: 6px;
+    padding: .25rem;
+    box-shadow: -1px 1px 1px 1px gray;
+    font-size: 1rem;
+    outline: none;
+    border: none;
+    height: 32px;
+}
+
+.error {
+    color: red;
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: -2px 2px 2px 2px gray;
+    padding: .5rem;
+}
+
+.results-div {
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: -2px 2px 2px 2px gray;
+    min-height: 300px;
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: 1fr;
+    justify-content: center;
+    gap: .5rem;
+    text-align: center;
+    padding: .25rem;
+}
+
+#results-name, #results-temp {
+    font-size: 2rem;;
+}
+
+#results-bot {
+    font-size: 1.5rem;
+}
+
+.horizontal {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+}
+
+.vertical {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.hide {
+    display: none;
 }
