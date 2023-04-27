@@ -135,21 +135,23 @@ const precChance = document.createElement('div');
 precChance.setAttribute('id', 'prec-chance');
 rePrec.appendChild(precChance);
 
-async function getData(city) {
-    const weather = await getWeather(city)
-    const name = await weather.location.name;
-    const tempF = await weather.current.temp_f;
-    const tempC = await weather.current.temp_c;
-    const time = await weather.location.localtime;
-    const icon = await weather.current.condition.icon;
-    const hi = await weather.forecast.forecastday[0].day.maxtemp_f;
-    const low = await weather.forecast.forecastday[0].day.mintemp_f;
-    const precip = await weather.forecast.forecastday[0].day.daily_chance_of_rain;
-    const condition = await weather.current.condition.text;
-    const info = new Info(name, tempF, tempC, time, icon, hi, low, precip, condition);
-    console.log(info);
-    return info;
-}
+// eslint-disable-next-line consistent-return
+// async function getData(city) {
+//     const weather = await getWeather(city)
+//     if (weather) {
+//     const name = await weather.location.name;
+//     const tempF = await weather.current.temp_f;
+//     const tempC = await weather.current.temp_c;
+//     const time = await weather.location.localtime;
+//     const icon = await weather.current.condition.icon;
+//     const hi = await weather.forecast.forecastday[0].day.maxtemp_f;
+//     const low = await weather.forecast.forecastday[0].day.mintemp_f;
+//     const precip = await weather.forecast.forecastday[0].day.daily_chance_of_rain;
+//     const condition = await weather.current.condition.text;
+//     const info = new Info(name, tempF, tempC, time, icon, hi, low, precip, condition);
+//     return info;
+//     }
+// }
 
 // Create cards
 function createBlankCards() {
@@ -164,8 +166,7 @@ function createBlankCards() {
 // Create city card
 async function createCityCard(city) {
     const cityCard = document.getElementById(city);
-    const cityInfo = await getData(city);
-    createFields(cityInfo);
+    const cityInfo = await getWeather(city);    
 
     function createFields(info) {
         const a = document.createElement('div');
@@ -189,16 +190,17 @@ async function createCityCard(city) {
         const ca = document.createElement('img');
         ca.setAttribute('src', `https:${info.icon}`);
         c.appendChild(ca);
-        };     
+        };
+    createFields(cityInfo);
     citySide.appendChild(cityCard);
 }
 
-async function populateResults(city) {
-    const cityInfo = await getData(city);
+async function populateResults(cityInfo) {
     resultsName.innerText = cityInfo.name;
     resultsTime.innerText = `${cityInfo.time.substr(-5)}`;
     const a = document.createElement('img');
     a.setAttribute('src', `https:${cityInfo.icon}`);
+    resultsIconImg.innerText = '';
     resultsIconImg.appendChild(a);
     resultsIconText.innerText = cityInfo.condition;
     reTemp.innerHTML = `${Math.floor(cityInfo.tempF)}&#176`;
@@ -207,23 +209,26 @@ async function populateResults(city) {
     precChance.innerHTML = `${cityInfo.precip}%`;
 }
 
+async function searchAndPopulate(city) {
+    const info = await getWeather(city);
+    if (info) await populateResults(info);
+}
+
 async function searchCity(event) {
     errorDiv.classList.add('hide');
     const formData = new FormData(event.target);
     let city = formData.get('search-bar');
     city = city.trim();
-    console.log(city);
-    if (!city) {
-        errorDiv.classList.remove('hide');
-    }
-    const test = await getData(city);
-    console.log(test);
+    searchAndPopulate(city);
+    document.querySelector('form').reset();
     event.preventDefault();
 }
 
 document.querySelector('form').addEventListener('submit', searchCity);
 
-
 createBlankCards();
 cities.forEach(city => createCityCard(city));
-populateResults('New York');
+
+// populateResults(getWeather('New York'));
+
+searchAndPopulate('New York');
