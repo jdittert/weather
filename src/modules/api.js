@@ -18,7 +18,7 @@ export async function getWeather(city) {
         if (!city) {
             throw new Error('Search field left blank.');
         };
-
+// Comment
         const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=bbc801c4c8bb401a9eb180203232504&q=${city}&days=5&aqi=no&alerts=no`, {mode: 'cors'});
         if (response.ok) {
             weatherData = await response.json();
