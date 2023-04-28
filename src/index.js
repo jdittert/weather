@@ -1,22 +1,28 @@
+/* eslint-disable no-restricted-syntax */
 import './style.css'
-import { getWeather, Info } from "./modules/api";
+import { getWeather } from "./modules/api";
 
+// Initialize default cities for left side
 const cities = ['Los Angeles', 'Chicago', 'New York', 'London', 'Berlin'];
 
+// Create static DOM
 const main = document.createElement('main');
 main.setAttribute('id', 'main');
 document.body.appendChild(main);
 
+// Left side
 const citySide = document.createElement('div');
 citySide.setAttribute('id', 'city-side');
 citySide.classList.add('city-side');
 main.appendChild(citySide);
 
+// Right side
 const searchSide = document.createElement('div');
 searchSide.setAttribute('id', 'search-side');
 searchSide.classList.add('search-side');
 main.appendChild(searchSide);
 
+// Search form
 const formDiv = document.createElement('div');
 const searchForm = document.createElement('form');
 searchForm.setAttribute('id', 'search');
@@ -28,6 +34,7 @@ const searchBar = document.createElement('input');
 searchBar.setAttribute('id', 'search-bar');
 searchBar.setAttribute('type', 'text');
 searchBar.setAttribute('name', 'search-bar');
+searchBar.classList.add('card');
 searchBar.setAttribute('placeholder', 'Search for a city...');
 searchBarDiv.appendChild(searchBar);
 
@@ -42,17 +49,20 @@ searchButtonDiv.appendChild(searchButton);
 formDiv.appendChild(searchForm);
 searchSide.appendChild(formDiv);
 
+// Hidden error div
 const errorDiv = document.createElement('div');
 errorDiv.setAttribute('id', 'error');
-errorDiv.classList.add('error', 'hide');
+errorDiv.classList.add('error', 'hide', 'card');
 errorDiv.innerText = 'City not in database.';
 searchSide.appendChild(errorDiv);
 
+// Search results div
 const resultsDiv = document.createElement('div');
 resultsDiv.setAttribute('id', 'results-div');
-resultsDiv.classList.add('results-div');
+resultsDiv.classList.add('results-div', 'card');
 searchSide.appendChild(resultsDiv);
 
+// Results top row
 const resultsTop = document.createElement('div');
 resultsTop.setAttribute('id', 'results-top');
 resultsTop.classList.add('vertical');
@@ -66,6 +76,7 @@ const resultsTime = document.createElement('div');
 resultsTime.setAttribute('id', 'results-time');
 resultsTop.appendChild(resultsTime);
 
+// Results mid row
 const resultsMid = document.createElement('div');
 resultsMid.setAttribute('id', 'results-mid');
 resultsMid.classList.add('horizontal');
@@ -88,6 +99,7 @@ const resultsIconText = document.createElement('div');
 resultsIconText.setAttribute('id', 'results-icon-text');
 resultsIconDiv.appendChild(resultsIconText);
 
+// Results bottom row
 const resultsBot = document.createElement('div');
 resultsBot.setAttribute('id', 'results-bot');
 resultsBot.classList.add('horizontal');
@@ -135,37 +147,12 @@ const precChance = document.createElement('div');
 precChance.setAttribute('id', 'prec-chance');
 rePrec.appendChild(precChance);
 
-// eslint-disable-next-line consistent-return
-// async function getData(city) {
-//     const weather = await getWeather(city)
-//     if (weather) {
-//     const name = await weather.location.name;
-//     const tempF = await weather.current.temp_f;
-//     const tempC = await weather.current.temp_c;
-//     const time = await weather.location.localtime;
-//     const icon = await weather.current.condition.icon;
-//     const hi = await weather.forecast.forecastday[0].day.maxtemp_f;
-//     const low = await weather.forecast.forecastday[0].day.mintemp_f;
-//     const precip = await weather.forecast.forecastday[0].day.daily_chance_of_rain;
-//     const condition = await weather.current.condition.text;
-//     const info = new Info(name, tempF, tempC, time, icon, hi, low, precip, condition);
-//     return info;
-//     }
-// }
-
-// Create cards
-function createBlankCards() {
-    cities.forEach((city) => {
-        const cityCard = document.createElement('div');
-        citySide.appendChild(cityCard);
-        cityCard.setAttribute('id', `${city}`)
-        cityCard.classList.add('city-card');
-    });
-}
-
 // Create city card
 async function createCityCard(city) {
-    const cityCard = document.getElementById(city);
+    const cityCard = document.createElement('div');
+    citySide.appendChild(cityCard);
+    cityCard.setAttribute('id', `${city}`)
+    cityCard.classList.add('city-card', 'card');
     const cityInfo = await getWeather(city);    
 
     function createFields(info) {
@@ -192,9 +179,10 @@ async function createCityCard(city) {
         c.appendChild(ca);
         };
     createFields(cityInfo);
-    citySide.appendChild(cityCard);
+    return cityCard;
 }
 
+// Create results card
 async function populateResults(cityInfo) {
     resultsName.innerText = cityInfo.name;
     resultsTime.innerText = `${cityInfo.time.substr(-5)}`;
@@ -224,11 +212,16 @@ async function searchCity(event) {
     event.preventDefault();
 }
 
+// Make sure city cards load in order
+async function createCards() {
+    const cards = [];
+    for (const city of cities) {        
+        cards.push(createCityCard(city));
+    }
+    citySide.appendChild(await Promise.all(cards));
+}
+
+// Initialize website
 document.querySelector('form').addEventListener('submit', searchCity);
-
-createBlankCards();
-cities.forEach(city => createCityCard(city));
-
-// populateResults(getWeather('New York'));
-
+document.addEventListener('DOMContentLoaded', createCards);
 searchAndPopulate('New York');

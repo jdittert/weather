@@ -2,6 +2,7 @@
     font-family: 'Noto Sans';
     src: url(./fonts/NotoSans-Regular.ttf);
 }
+
 body {
     background-color: blue;
     font-weight: bold;
@@ -12,11 +13,20 @@ body {
     box-sizing: border-box;
 }
 
+/* Main CSS */
 #main {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 2rem;
+}
+
+/* Left side styling */
+.card {
+    border-radius: 6px;
+    background-color: white;
+    box-shadow: -2px 2px 2px 2px gray;
+    color: black;
 }
 
 .city-side {
@@ -26,11 +36,7 @@ body {
     justify-content: center;
 }
 
-.city-card {
-    border-radius: 6px;
-    background-color: white;
-    box-shadow: -2px 2px 2px 2px gray;
-    color: black;
+.city-card {    
     padding: .25rem;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;    
@@ -44,6 +50,7 @@ body {
     text-align: center;
 }
 
+/* Right side styling */
 .search-side {
     display: grid;
     grid-template-rows: min-content, 1fr;
@@ -56,11 +63,7 @@ form {
     gap: .5rem;
 }
 
-input {
-    border-radius: 6px;
-    background-color: white;
-    box-shadow: -2px 2px 2px 2px gray;
-    color: black;    
+input {    
     width: 300px;
     height: 32px;
     padding: .25rem;
@@ -88,16 +91,10 @@ button {
 
 .error {
     color: red;
-    background-color: white;
-    border-radius: 6px;
-    box-shadow: -2px 2px 2px 2px gray;
     padding: .5rem;
 }
 
 .results-div {
-    background-color: white;
-    border-radius: 6px;
-    box-shadow: -2px 2px 2px 2px gray;
     min-height: 300px;
     display: grid;
     grid-template-rows: repeat(3, 1fr);
@@ -116,6 +113,7 @@ button {
     font-size: 1.5rem;
 }
 
+/* For results display */
 .horizontal {
     display: flex;
     justify-content: space-around;
@@ -129,6 +127,7 @@ button {
     justify-content: center;
 }
 
+/* For hidden error div */
 .hide {
     display: none;
 }

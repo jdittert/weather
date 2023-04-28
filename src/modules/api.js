@@ -22,7 +22,6 @@ export async function getWeather(city) {
         const response = await fetch(`http://api.weatherapi.com/v1/forecast.json?key=bbc801c4c8bb401a9eb180203232504&q=${city}&days=5&aqi=no&alerts=no`, {mode: 'cors'});
         if (response.ok) {
             weatherData = await response.json();
-            console.log(await weatherData);
             const name = await weatherData.location.name;
             const tempF = await weatherData.current.temp_f;
             const tempC = await weatherData.current.temp_c;
@@ -35,22 +34,10 @@ export async function getWeather(city) {
             const info = new Info(name, tempF, tempC, time, icon, hi, low, precip, condition);
             return info;
         } 
-            throw new Error(`${city} not in database.`);
+            throw new Error(`"${city}" not in database.`);
     ;                
     } catch (error) {
         document.querySelector('.error').innerText = error;
         document.querySelector('.error').classList.remove('hide');
     }  
-}
-
-export async function getData(city) {
-    const weather = await getWeather(city)
-    const tempF = await weather.current.temp_f;
-    const tempC = await weather.current.temp_c;
-    const time = await weather.location.localtime;
-    const icon = await weather.current.condition.icon;
-    console.log(tempF, tempC, time, icon);
-    const info = new Info(tempF, tempC, time, icon);
-    console.log(info);
-    return info;
 }
